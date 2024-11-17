@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_IMAGE = "your-dockerhub-image" // Replace with the name of your Docker image
+        DOCKER_IMAGE = "yassined97/my_new_stmdevenv:latest" // Replace with the name of your Docker image
         WORKSPACE_DIR = "/workspace/stm32_project" // Directory inside the Docker container for the project
         GIT_REPO = "https://github.com/dridiy21/stm32_Env.git" // Your GitHub repository URL
     }
