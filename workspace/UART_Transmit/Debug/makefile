@@ -60,8 +60,8 @@ all: main-build
 main-build: UART_Transmit.elf secondary-outputs
 
 # Tool invocations
-UART_Transmit.elf UART_Transmit.map: $(OBJS) $(USER_OBJS) C:\Users\ydridi\Documents\devops\Workspace_integration\UART_Transmit\STM32F746ZGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "UART_Transmit.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\ydridi\Documents\devops\Workspace_integration\UART_Transmit\STM32F746ZGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UART_Transmit.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+UART_Transmit.elf UART_Transmit.map: $(OBJS) $(USER_OBJS) C:\Users\ydridi\Documents\devops\stm32_Env\workspace\UART_Transmit\STM32F746ZGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "UART_Transmit.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\ydridi\Documents\devops\stm32_Env\workspace\UART_Transmit\STM32F746ZGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UART_Transmit.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
