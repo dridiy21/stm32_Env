@@ -15,26 +15,36 @@ pipeline {
         }
 
         stage('Build in Docker') {
+            environment {
+                DOCKER_IMAGE = "yassined97/my_new_stmdevenv:latest" // Docker image name
+                GIT_PROJECT_DIR = "/workspace/stm32_project" // Path to the project directory inside the container
+            }
             steps {
                 script {
-                    // Run the Docker container and execute commands step-by-step
+                    // Run the Docker container and execute your commands step-by-step
                     sh """
-                    docker run --rm -v \$(pwd):${WORKSPACE_DIR} ${DOCKER_IMAGE} bash -c '
-                        # Clone the repo if the directory does not exist
-                        if [ ! -d "${WORKSPACE_DIR}/.git" ]; then
-                            git clone ${GIT_REPO} ${WORKSPACE_DIR};
-                        else
-                            # Pull latest changes if repo already cloned
-                            cd ${WORKSPACE_DIR} && git pull;
-                        fi
+                    docker run --rm -v \$(pwd):/workspace ${DOCKER_IMAGE} bash -c '
+                        # Navigate to the GitHub project directory
+                        cd ${GIT_PROJECT_DIR}
                         
-                        # Change to the project directory and compile
-                        cd ${WORKSPACE_DIR} && make
+                        # Pull the latest changes from the main branch
+                        git pull origin main
+                        
+                        # Navigate to the root workspace
+                        cd /workspace
+                        
+                        # Compile the project using STM32CubeIDE headless build
+                        /opt/st/stm32cubeide_1.15.0/stm32cubeide --launcher.suppressErrors -nosplash \
+                            -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
+                            -data "./" \
+                            -import "./UART_Transmit/" \
+                            -build UART_Transmit
                     '
                     """
                 }
             }
         }
+
     }
 
     post {
