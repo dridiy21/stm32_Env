@@ -1,34 +1,23 @@
 pipeline {
     agent any
-
     environment {
-        DOCKER_IMAGE = "yassined97/my_new_stmdevenv:latest" // Docker image
-        GIT_PROJECT_DIR = "/workspace/stm32_Env"           // Path to the GitHub project inside the container
-        BUILD_DIR = "/workspace/stm32_Env/workspace"       // Directory to navigate to before compilation
+        DOCKER_IMAGE = "yassined97/my_new_stmdevenv:latest"
+        WORKSPACE_PATH = "/workspace"
     }
-
     stages {
         stage('Initialization') {
             steps {
-                echo 'New push detected' // Future enhancement: echo the commit message
+                echo "New push detected"
             }
         }
-
         stage('Build in Docker') {
             steps {
                 script {
                     sh """
-                    docker run --rm -v \$(pwd):/workspace ${DOCKER_IMAGE} bash -c '
-                        # Navigate to the GitHub project directory
-                        cd ${GIT_PROJECT_DIR}
-                        
-                        # Pull the latest changes from the main branch
-                        git pull origin main
-                        
-                        # Navigate to the build directory
-                        cd ${BUILD_DIR}
-                        
-                        # Compile the project using STM32CubeIDE headless build
+                    docker run --rm -v \$(pwd):${WORKSPACE_PATH} ${DOCKER_IMAGE} bash -c '
+                        cd ${WORKSPACE_PATH}/stm32_Env &&
+                        git pull origin main &&
+                        cd workspace &&
                         /opt/st/stm32cubeide_1.15.0/stm32cubeide --launcher.suppressErrors -nosplash \
                             -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
                             -data "./" \
@@ -40,13 +29,9 @@ pipeline {
             }
         }
     }
-
     post {
         always {
             echo "Pipeline completed."
-        }
-        success {
-            echo "Build succeeded!"
         }
         failure {
             echo "Build failed!"
