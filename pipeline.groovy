@@ -14,7 +14,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    docker run -it --rm \
+                    docker run -i --rm \
                         -v \$(pwd):${WORKSPACE_PATH} ${DOCKER_IMAGE} /bin/bash -c '
                         cd ${WORKSPACE_PATH}/stm32_Env &&
                         git pull origin main &&
@@ -39,6 +39,7 @@ pipeline {
         }
     }
 }
+
 
 
 
