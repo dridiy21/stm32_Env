@@ -16,9 +16,9 @@ pipeline {
                     sh """
                     docker run -i --rm \
                         -v \$(pwd):${WORKSPACE_PATH} ${DOCKER_IMAGE} /bin/bash -c '
-                        cd stm32_Env &&
+                        cd ${WORKSPACE_PATH}/stm32_Env &&
                         git pull origin main &&
-                        cd workspace &&
+                        cd ${WORKSPACE_PATH}/stm32_Env/workspace &&
                         /opt/st/stm32cubeide_1.15.0/stm32cubeide --launcher.suppressErrors -nosplash \
                             -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
                             -data "./" \
