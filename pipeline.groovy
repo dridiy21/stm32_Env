@@ -15,8 +15,8 @@ pipeline {
                 script {
                     sh """
                     docker run -i --rm \
-                        -v \$(pwd):${WORKSPACE_PATH} ${DOCKER_IMAGE} /bin/bash '
-                        cd ${WORKSPACE_PATH}/stm32_Env &&
+                        -v \$(pwd):${WORKSPACE_PATH} ${DOCKER_IMAGE} /bin/bash -c '
+                        cd stm32_Env &&
                         git pull origin main &&
                         cd workspace &&
                         /opt/st/stm32cubeide_1.15.0/stm32cubeide --launcher.suppressErrors -nosplash \
