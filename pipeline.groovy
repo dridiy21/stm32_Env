@@ -12,10 +12,8 @@ pipeline {
                     sh """
                     docker run -i --rm \\
                         -v \$(pwd):/workspace yassined97/my_new_stmdevenv:latest /bin/bash -c '
-                        whoami
-                        &&
-                        pwd
-                        &&
+                        whoami &&
+                        pwd &&
                         ls
                         #cd stm32_Env/workspace &&
                         #git pull origin main &&
