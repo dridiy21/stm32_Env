@@ -14,8 +14,10 @@ pipeline {
                         -v \$(pwd):/workspace yassined97/my_new_stmdevenv:latest /bin/bash -c '
                         whoami &&
                         pwd &&
+                        ls &&
+                        cd workspace &&
                         ls
-                        #cd stm32_Env/workspace &&
+                        #stm32_Env/workspace &&
                         #git pull origin main &&
                         #/opt/st/stm32cubeide_1.15.0/stm32cubeide --launcher.suppressErrors -nosplash \\
                         #    -application org.eclipse.cdt.managedbuilder.core.headlessbuild \\
