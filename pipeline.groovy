@@ -10,7 +10,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    docker run -it --rm \\
+                    docker run -i --rm \\
                         -v \$(pwd):/workspace yassined97/my_new_stmdevenv:latest /bin/bash -c '
                         cd stm32_Env/workspace &&
                         git pull origin main &&
