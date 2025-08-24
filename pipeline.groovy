@@ -1,44 +1,55 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'yassined97/my_new_stmdevenv'
+            args '-u root:root' // Ensures we have proper permissions if needed
+        }
+    }
+
+    triggers {
+        githubPush()  // Trigger when GitHub sends a webhook
+    }
+
     environment {
-        DOCKER_IMAGE = "yassined97/my_new_stmdevenv:latest"
-        WORKSPACE_PATH = "/workspace"
+        PROJECT_DIR = "stm32_Env"
+        WORKSPACE_DIR = "workspace"
+        STM32CUBEIDE = "/opt/st/stm32cubeide_1.15.0/stm32cubeide"
+        PROJECT_NAME = "UART_Transmit"
     }
+
     stages {
-        stage('Initialization') {
+
+        stage('Update Project') {
             steps {
-                echo "New push detected"
+                sh """
+                    cd ${PROJECT_DIR}
+                    git pull origin main
+                """
             }
         }
-        stage('Build in Docker') {
+
+        stage('Build') {
             steps {
-                script {
-                    sh """
-                    docker run -i --rm \
-                        -v \$(pwd):${WORKSPACE_PATH} ${DOCKER_IMAGE} /bin/bash -c '
-                        #cd ${WORKSPACE_PATH}/stm32_Env &&
-                        ls &&
-                        cd workspace &&
-                        ls &&
-                        git pull origin main &&
-                        #cd ${WORKSPACE_PATH}/stm32_Env/workspace &&
-                        /opt/st/stm32cubeide_1.15.0/stm32cubeide --launcher.suppressErrors -nosplash \
-                            -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
-                            -data "./" \
-                            -import "./UART_Transmit/" \
-                            -build UART_Transmit
-                    '
-                    """
-                }
+                sh """
+                    cd ${PROJECT_DIR}/${WORKSPACE_DIR}
+                    ${STM32CUBEIDE} \
+                      --launcher.suppressErrors \
+                      -nosplash \
+                      -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
+                      -data "./" \
+                      -import "./${PROJECT_NAME}/" \
+                      -build ${PROJECT_NAME}
+                """
             }
         }
     }
+
     post {
-        always {
-            echo "Pipeline completed."
+        success {
+            echo 'Build succeeded!'
         }
         failure {
-            echo "Build failed!"
+            echo 'Build failed!'
         }
     }
 }
