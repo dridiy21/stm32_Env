@@ -5,7 +5,7 @@ pipeline {
             args '-u root:root' // Ensures we have proper permissions if needed
         }
     }
-
+    
     triggers {
         githubPush()  // Trigger when GitHub sends a webhook
     }
@@ -19,7 +19,12 @@ pipeline {
 
     stages {
 
-
+        stage('Initialization') {
+            steps {
+                echo "New push detected"
+            }
+        }
+        
         stage('Update Project') {
             steps {
                 sh """
