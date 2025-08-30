@@ -1,56 +1,43 @@
+##### webhooks + docker run #####
 pipeline {
-    agent {
-        docker {
-            image 'yassined97/my_new_stmdevenv'
-            args '-u root:root' // Ensures we have proper permissions if needed
-        }
-    }
+    agent any
 
     triggers {
-        githubPush()  // Trigger when GitHub sends a webhook
-    }
-
-    environment {
-        PROJECT_DIR = "stm32_Env"
-        WORKSPACE_DIR = "workspace"
-        STM32CUBEIDE = "/opt/st/stm32cubeide_1.15.0/stm32cubeide"
-        PROJECT_NAME = "UART_Transmit"
+        githubPush()  // Detect GitHub webhooks (push events)
     }
 
     stages {
-
-
-        stage('Update Project') {
+        stage('Checkout') {
             steps {
-                sh """
-                    cd ${PROJECT_DIR}
-                    git pull origin main
-                """
+                checkout scmGit(
+                    branches: [[name: '*/main']],
+                    extensions: [],
+                    userRemoteConfigs: [[url: 'https://github.com/dridiy21/stm32_Env.git']]
+                )
             }
         }
 
-        stage('Build') {
+        stage('Run Docker and Print User') {
             steps {
-                sh """
-                    cd ${PROJECT_DIR}/${WORKSPACE_DIR}
-                    ${STM32CUBEIDE} \
-                      --launcher.suppressErrors \
-                      -nosplash \
-                      -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
-                      -data "./" \
-                      -import "./${PROJECT_NAME}/" \
-                      -build ${PROJECT_NAME}
-                """
+                script {
+                    docker.image('yassined97/my_new_stmdevenv').inside {
+                        sh 'whoami'
+                    }
+                }
             }
         }
     }
+}
 
-    post {
-        success {
-            echo 'Build succeeded!'
-        }
-        failure {
-            echo 'Build failed!'
+##### webhooks only #####
+pipeline {
+    agent any
+
+    stages {
+        stage('Hello') {
+            steps { 
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/dridiy21/stm32_Env.git']])
+            }
         }
     }
 }
