@@ -2,14 +2,7 @@ pipeline {
     agent any
 
     triggers {
-        githubPush()  // Déclenche le pipeline sur push vers GitHub
-    }
-
-    environment {
-        STM32CUBEIDE = "/opt/st/stm32cubeide_1.15.0/stm32cubeide"
-        WORKSPACE_DIR = "workspace"
-        PROJECT_NAME = "UART_Transmit"
-        REPO_URL = "https://github.com/dridiy21/stm32_Env.git"
+        githubPush()  // Detect GitHub webhooks (push events)
     }
 
     stages {
@@ -18,24 +11,18 @@ pipeline {
                 checkout scmGit(
                     branches: [[name: '*/main']],
                     extensions: [],
-                    userRemoteConfigs: [[url: "${REPO_URL}"]]
+                    userRemoteConfigs: [[url: 'https://github.com/dridiy21/stm32_Env.git']]
                 )
             }
         }
 
-        stage('Build inside Docker') {
+        stage('Run Docker') {
             steps {
-                sh """
+                sh '''
                     docker run --rm \
-                    -v \$(pwd):/workspace \\
-                    yassined97/my_new_stmdevenv:latest \\
-                    bash -c "
-                        whoami && \
-                        cd stm32_Env/${WORKSPACE_DIR} && \
-                        git pull origin main && \
-                        ${STM32CUBEIDE} --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data ./ -import ./${PROJECT_NAME}/ -build ${PROJECT_NAME}
-                    "
-                """
+                    yassined97/my_new_stmdevenv:latest \
+                    bash -c "whoami && cd stm32_Env && git pull && cd workspace && /opt/st/stm32cubeide_1.15.0/stm32cubeide --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data ./ -import ./UART_Transmit/ -build UART_Transmit"
+                '''
             }
         }
     }
