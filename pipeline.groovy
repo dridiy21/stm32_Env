@@ -1,34 +1,12 @@
-##### webhooks + docker run #####
 pipeline {
-<<<<<<< HEAD
     agent any
 
-=======
-    agent {
-        docker {
-            image 'yassined97/my_new_stmdevenv'
-            args '-u root:root' // Ensures we have proper permissions if needed
-        }
-    }
-    
->>>>>>> cf340a73918909373829e60392828e6d9b40c690
     triggers {
         githubPush()  // Detect GitHub webhooks (push events)
     }
 
     stages {
-<<<<<<< HEAD
         stage('Checkout') {
-=======
-
-        stage('Initialization') {
-            steps {
-                echo "New push detected"
-            }
-        }
-        
-        stage('Update Project') {
->>>>>>> cf340a73918909373829e60392828e6d9b40c690
             steps {
                 checkout scmGit(
                     branches: [[name: '*/main']],
@@ -38,26 +16,13 @@ pipeline {
             }
         }
 
-        stage('Run Docker and Print User') {
+        stage('Run Docker') {
             steps {
-                script {
-                    docker.image('yassined97/my_new_stmdevenv').inside {
-                        sh 'whoami'
-                    }
-                }
-            }
-        }
-    }
-}
-
-##### webhooks only #####
-pipeline {
-    agent any
-
-    stages {
-        stage('Hello') {
-            steps { 
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/dridiy21/stm32_Env.git']])
+                sh '''
+                    docker run --rm \
+                    yassined97/my_new_stmdevenv:latest \
+                    bash -c "whoami && cd stm32_Env && git pull && cd workspace && /opt/st/stm32cubeide_1.15.0/stm32cubeide --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data ./ -import ./UART_Transmit/ -build UART_Transmit"
+                '''
             }
         }
     }
