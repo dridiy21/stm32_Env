@@ -31,7 +31,7 @@ pipeline {
                     yassined97/my_new_stmdevenv:latest \\
                     bash -c "
                         whoami && \
-                        cd /workspace/stm32_Env/${WORKSPACE_DIR} && \
+                        cd stm32_Env/${WORKSPACE_DIR} && \
                         git pull origin main && \
                         ${STM32CUBEIDE} --launcher.suppressErrors -nosplash -application org.eclipse.cdt.managedbuilder.core.headlessbuild -data ./ -import ./${PROJECT_NAME}/ -build ${PROJECT_NAME}
                     "
