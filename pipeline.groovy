@@ -31,7 +31,7 @@ pipeline {
                     bash -c "
                         whoami && \
                         ls && \
-                        #cd /workspace/stm32_Env/${WORKSPACE_DIR} && \
+                        cd stm32_Env/${WORKSPACE_DIR} && \
                         ${STM32CUBEIDE} --launcher.suppressErrors -nosplash -application \
                         org.eclipse.cdt.managedbuilder.core.headlessbuild -data ./ -import ./UART_Transmit/ -build ${PROJECT_NAME}
                     "
