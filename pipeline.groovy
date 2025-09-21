@@ -29,9 +29,9 @@ pipeline {
                 sh """
                     docker run --rm -v \$(pwd):/workspace ${DOCKER_IMG} \
                     bash -c "
-                        whoami && \
+                        pwd && \
                         ls && \
-                        cd stm32_Env/${WORKSPACE_DIR} && \
+                        cd ${WORKSPACE_DIR} && \
                         ${STM32CUBEIDE} --launcher.suppressErrors -nosplash -application \
                         org.eclipse.cdt.managedbuilder.core.headlessbuild -data ./ -import ./UART_Transmit/ -build ${PROJECT_NAME}
                     "
